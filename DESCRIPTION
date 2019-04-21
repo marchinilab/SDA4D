@@ -1,0 +1,16 @@
+Package: SDA4D
+Title: Runs Four Dimensional SDA Parafac Tensor Decomposition
+Version: 0.1
+Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Description: SDA4D provides functionality within R for running a Bayesian sparse 
+    PARAFAC tensor decomposition in 4D using the same prior structure as 
+    developed in SDA.
+Depends: R (>= 3.4.4)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

@@ -19,14 +19,14 @@
 #' @return a list of inferred parameters and ELBO trace.
 #'
 #' @export
-RunSDA4D<-function(data_tensor,dimn_vector,num_components=4,maxiters=2000,stopping=TRUE,track=10){
-    stopifnot(all(dimn_vector)>0)
+RunSDA4D<-function(data_tensor,dimn_vector,num_components=4,max_iters=2000,stopping=TRUE,track=10){
+    stopifnot(all(dimn_vector>0))
     stopifnot(length(dimn_vector)==length(dim(data_tensor)))
     if(!all(dim(data_tensor)==dimn_vector)){
         stop('ERROR: dimension of tensor does not match provided dimensions, stopping')
     }
-    stopifnot(numcomponents>1)
-    stopifnot(maxiter>1)
+    stopifnot(num_components>1)
+    stopifnot(max_iters>1)
     if(stopping & track<1){
         stop('ERROR: stopping is set to TRUE but track is < 1 , set track to at least 1.')
     }
@@ -37,7 +37,7 @@ RunSDA4D<-function(data_tensor,dimn_vector,num_components=4,maxiters=2000,stoppi
                        L=dimn_vector[2],
                        M=dimn_vector[3],
                        T=dimn_vector[4],
-                       C=numcomponents,
+                       C=num_components,
                        e=1e-6,
                        f=1e6,
                        g=0,
@@ -56,18 +56,19 @@ RunSDA4D<-function(data_tensor,dimn_vector,num_components=4,maxiters=2000,stoppi
     }
 
     ## run the method and return variables
-    res<-SparsePARAFAC(params_to_run,data_tensor,maxiter=maxiters,stopping=stopping,track=track,debugging=FALSE)
+    res<-SparsePARAFAC(params_to_run,data_tensor,maxiter=max_iters,stopping=stopping,track=track,debugging=FALSE)
     if(res$Error==1){
         print('Finished but Negative Free Energy shows signs of a decrease, this should be checked.')
     }else{
         print('Finished')
     }
+    res[[1]]<-NULL #removes the error indicator from the output.
     if(stopping){
         print(paste(res$maximumiteration,' Iterations were carried out.'))
     }
-
-    if(res$Neg_FE[1]!=0){
-        res$Neg_FE = res$Neg_FE[res$Neg_FE!=0]
+    names(res)[1] = "ELBO" # renames Neg_FE to ELBO for the vignette.
+    if(res$ELBO[1]!=0){
+        res$ELBO = res$ELBO[res$ELBO!=0]
     }
     print('returning output')
     return(res)

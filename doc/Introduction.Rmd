@@ -20,39 +20,53 @@ Here we provide a basic introduction to the SDA4D package, an implementation of 
 
 First, ensure you've loaded the package.
 ```{r setup}
-#Load the library SDA4D
-#library(SDA4D)
+# #Load the library SDA4D
+# #requires devtools
+#install.packages('devtools')
+#devtools::install_github('https://github.com/marchinilab/SDA4D')
+# #load library
+library(SDA4D)
 ```
 
-We provide a simple function to generate a data tensor similar to those we used in simulations, named `generate_example_data` which also returns a list of the matrices used to generate it.
+We provide a function to generate a data tensor similar to those we used in simulations, named `generate_example_data` which also returns a list of the matrices used to generate it.
 
 ```{r generatedata}
 set.seed(42)
-# generatedData <- generate_example_data()
-# 
-# dim(generatedData$dataTensor)
-# 
-# lapply(generateData,dim)
+generatedData <- generate_example_data()
+ 
+lapply(generatedData,dim)
 ```
 
 ## Performing a short run of the tensor decomposition
 
 Now, setting `stopping=FALSE` to ignore the stopping criterion we run the tensor decomposition with the function `RunSDA4D` for 100 iterations as follows:
 
-```{r runmethod}
-#res<-RunSDA4D(generatedData$dataTensor,dimn_vector = c(),maxiters = 100,stopping=FALSE)
+```{r runmethod,results=FALSE}
+ res<-RunSDA4D(data_tensor = generatedData$dataTensor,
+               dimn_vector = c(200,500,16,3),
+               max_iters = 50,
+               num_components = 8,
+               stopping=FALSE)
 ```
+Note that we have suppressed the console output from this run in the file here.
 
-In the output we have the evidence lower bound (ELBO), recorded at each iteration, the maximum number of iterations, and a number of other parameters.
+In the output we have the evidence lower bound (ELBO, also sometimes referred to as the negative free energy), recorded at each iteration, the maximum number of iterations, and a number of other parameters.
 ```{r plotELBO,fig.width=8,fig.height=6,echo=FALSE}
-res<-list(Neg_FE=exp(rnorm(100)))
-# plot(log(res$Neg_FE[-1]),col='red',pch=4,xlab='Iteration',main='log(ELBO) over 100 iterations')
-# lines(log(res$Neg_FE[-1]),col='red')
+#res<-list(Neg_FE=exp(rnorm(100)))
+ # plot(-log(-res$Neg_FE[-1]),col='red',pch=4,xlab='Iteration',main='log(ELBO) over 100 iterations')
+ # lines(-log(-res$Neg_FE[-1]),col='red')
 ```
 
 ```{r plotELBOqplot,echo=FALSE,fig.width=6,fig.height=4}
 library(ggplot2)
-qplot(x=c(1:length(res$Neg_FE[-1])),y=res$Neg_FE[-1],geom=c("point", "line"))+xlab('Iteration')+ggtitle('log(ELBO) over 100 iterations')
+startfrom=5
+qplot(x=c(startfrom:length(res$ELBO)),
+      y=-log(-res$ELBO[-c(1:(startfrom-1))]),
+      geom=c("point", "line")
+      )+
+    ylab('-log(-ELBO)')+
+    xlab('Iteration')+
+    ggtitle('log(ELBO) over 50 iterations')
 ```
 
 
@@ -62,10 +76,30 @@ The output of the main function is a list of a number of components:
 
 The main RunSDA4D provides an interface to an implementation of a Bayesian sparse parallel factor analysis model for four-dimensional tensor decomposition.  
 
-The output therefore consists of a list of the approximate posterior distributions of the main parameters, in the form of their parameters, or point estimates where these were required.  
+The output therefore consists of a list of the approximate posterior distributions of the main parameters, in the form of their parameters, or point estimates where these were calculated instead.  
 
 ```{r outputnames}
 names(res)
+res$maximumiteration
+length(res$ELBO)
+```
+
+We accept a data tensor $Y \in \mathbb{R}^{N\times L \times M\times T}$ and model this as 
+$$y_{nlmt} = \sum_{c=1}^C a_{nc}b_{tc}d_{mc}x_{cl} +\epsilon_{nlmt},$$
+where $\epsilon_{nlmt} \sim N(0,\lambda_{lt}^{-1})$ is Gaussian noise, and $c$ indexes the $C$ components.  The model was designed with gene expression data in mind, with $N,L,M,T$ representing the number of samples, genes,time points, and tissues resprectively.  
+
+We place standard Gaussian priors on $a_{nc},b_{tc},d_{mc}$, and a spike and slab sparsity inducing prior on $x_{cl}$, rewriting $x_{cl}=w_{cl}s_{cl}$ where $w_{cl}$ is the diffuse Guassian 'slab' $N(0,\beta_c^{-1})$ and $s_{cl}$ is the Bernoulli 'spike' at 0 with probability $p_{cl}$.
+
+We apply a structured mean field variational Bayes approach,  pairing $w_{cl},s_{cl}$, but partitioning the remaining latent variables completely.  In the analytical updates we obtain Gaussian posteriors on the $a_{nc}, b_{tc},d_{mc}$, and we record in matrices the sets of means, precisions and second moments in the output.  
+
+The analytic updates of $W,S$ yield a spike and slab posterior with probability $\gamma_{cl}$ for the Bernoulli variable $s_{cl}$, and mean $m$, precision $\sigma$ for the slab $w_{cl}$.  We also record the first and second moment of the product $w_{cl}s_{cl}$.
+
+```{r outputnamesanddims}
+lapply(res$A,dim)
+
+lapply(res$WS,dim)
+
+identical(res$WS$mom1,res$WS$m*res$WS$gamma)
 ```
 
 

@@ -4,8 +4,8 @@
 \alias{RunSDA4D}
 \title{Run SDA4D Bayesian Sparse Tensor Decomposition with default parameters.}
 \usage{
-RunSDA4D(data_tensor, dimn_vector, num_components = 4, maxiters = 2000,
-  stopping = TRUE, track = 10)
+RunSDA4D(data_tensor, dimn_vector, num_components = 4,
+  max_iters = 2000, stopping = TRUE, track = 10)
 }
 \arguments{
 \item{data_tensor}{four dimensional tensor with dimensions $(N,L,M,T)$ where $N$ is the number of samples, $L$ is the number of genes.}
@@ -14,14 +14,14 @@ RunSDA4D(data_tensor, dimn_vector, num_components = 4, maxiters = 2000,
 
 \item{num_components}{integer number of components to run the decomposition with.}
 
-\item{maxiters}{integer maximum number of iterations to run.}
-
 \item{stopping}{binary TRUE/FALSE.  If TRUE then method will stop either
 after \code{maxiters} or when the average number of PIPs passing the
 threshold of 0.5 over \code{track} iterations drops below 1.}
 
 \item{track}{integer number of iterations to keep track of if implementing
 the stopping criterion as described in \code{stopping} description.}
+
+\item{maxiters}{integer maximum number of iterations to run.}
 }
 \value{
 a list of inferred parameters and ELBO trace.

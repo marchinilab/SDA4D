@@ -21,6 +21,15 @@
 #' @export
 RunSDA4D<-function(data_tensor,dimn_vector,num_components=4,max_iters=2000,stopping=TRUE,track=10){
     stopifnot(all(dimn_vector>0))
+    if(any(is.na(data_tensor))){
+      stop('ERROR: the data tensor contains missing data')
+    }
+    if(any(is.infinite(data_tensor))){
+      stop('ERROR: the data tensor contains infinite data')
+    }
+    if(!is.numeric(data_tensor)){
+      stop('ERROR: the data tensor contains non-numeric data')
+    }
     stopifnot(length(dimn_vector)==length(dim(data_tensor)))
     if(!all(dim(data_tensor)==dimn_vector)){
         stop('ERROR: dimension of tensor does not match provided dimensions, stopping')

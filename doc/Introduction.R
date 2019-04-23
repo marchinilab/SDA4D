@@ -34,12 +34,12 @@ lapply(generatedData,dim)
 library(ggplot2)
 startfrom=5
 qplot(x=c(startfrom:length(res$ELBO)),
-      y=-log(-res$ELBO[-c(1:(startfrom-1))]),
+      y=res$ELBO[-c(1:(startfrom-1))],
       geom=c("point", "line")
       )+
-    ylab('-log(-ELBO)')+
+    ylab('ELBO')+
     xlab('Iteration')+
-    ggtitle('log(ELBO) over 50 iterations')
+    ggtitle('ELBO over 50 iterations')
 
 ## ----outputnames---------------------------------------------------------
 names(res)

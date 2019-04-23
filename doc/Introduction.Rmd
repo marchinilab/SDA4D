@@ -50,7 +50,8 @@ Now, setting `stopping=FALSE` to ignore the stopping criterion we run the tensor
 ```
 Note that we have suppressed the console output from this run in the file here.
 
-In the output we have the evidence lower bound (ELBO, also sometimes referred to as the negative free energy), recorded at each iteration, the maximum number of iterations, and a number of other parameters.
+In the output we have the evidence lower bound (ELBO, also sometimes referred to as the negative free energy), recorded at each iteration, the maximum number of iterations, and a number of other parameters.  Note that in the code we have omitted constant terms from the ELBO.
+
 ```{r plotELBO,fig.width=8,fig.height=6,echo=FALSE}
 #res<-list(Neg_FE=exp(rnorm(100)))
  # plot(-log(-res$Neg_FE[-1]),col='red',pch=4,xlab='Iteration',main='log(ELBO) over 100 iterations')
@@ -102,8 +103,10 @@ lapply(res$WS,dim)
 identical(res$WS$mom1,res$WS$m*res$WS$gamma)
 ```
 
-We summarise the model as follows for a data tensor $\Y = (y_{nlmt})_{n,l,m,t}$:
+We summarise the model as follows for a data tensor $Y = (y_{nlmt})_{n,l,m,t}$:
+
 ### The Likelihood
+
 $$
 \begin{aligned}
 \mathbb{P}(Y\vert\Theta) &= \prod_{n,l,m,t}N\left(y_{nlmt} \lvert \sum_{c=1}^C a_{nc}b_{tc}d_{mc}w_{cl}s_{cl},\lambda_{lt}^{-1}\right). 
@@ -126,5 +129,6 @@ $$
 \mathbb{P}(\rho_c) &= \mbox{Beta}(\rho_c\vert r,z). 
 \end{aligned}
 $$
+In deriving our Variational inference algorithm, we partition the variables as $$\{a_{nc}\},\{b_{tc}\},\{d_{mc}\},\{\phi_{cl}\},\{\psi_{cl}\},\{\rho_c\},\{\beta_c\},\{w_{cl},s_{cl}\}$$
 
-
+The variables $a_{nc},b_{tc},d_{mc},w_{cl},s_{cl},\beta_c,$ all have analytical updates and so their estimates are reported as lists of matrices (or vectors) of parameters and moments. The remaining variables $\phi_{cl},\psi_{cl},\rho_c$ are found by optimizing the corresponding terms of the ELBO, and have point estimates reported.

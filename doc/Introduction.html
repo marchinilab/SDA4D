@@ -127,7 +127,7 @@ res<span class="op">$</span>maximumiteration
 <span class="kw">length</span>(res<span class="op">$</span>ELBO)
 <span class="co">#&gt; [1] 51</span></code></pre></div>
 <p>We accept a data tensor <span class="math inline">\(Y \in \mathbb{R}^{N\times L \times M\times T}\)</span> and model this as <span class="math display">\[y_{nlmt} = \sum_{c=1}^C a_{nc}b_{tc}d_{mc}x_{cl} +\epsilon_{nlmt},\]</span> where <span class="math inline">\(\epsilon_{nlmt} \sim N(0,\lambda_{lt}^{-1})\)</span> is Gaussian noise, and <span class="math inline">\(c\)</span> indexes the <span class="math inline">\(C\)</span> components. The model was designed with gene expression data in mind, with <span class="math inline">\(N,L,M,T\)</span> representing the number of samples, genes,time points, and tissues resprectively.</p>
-<p>We place standard Gaussian priors on <span class="math inline">\(a_{nc},b_{tc},d_{mc}\)</span>, and a spike and slab sparsity inducing prior on <span class="math inline">\(x_{cl}\)</span>, rewriting <span class="math inline">\(x_{cl}=w_{cl}s_{cl}\)</span> where <span class="math inline">\(w_{cl}\)</span> is the diffuse Guassian ‘slab’ <span class="math inline">\(N(0,\beta_c^{-1})\)</span> and <span class="math inline">\(s_{cl}\)</span> is the Bernoulli ‘spike’ at 0 with probability <span class="math inline">\(p_{cl}\)</span>.</p>
+<p>We place standard Gaussian priors on <span class="math inline">\(a_{nc},b_{tc},d_{mc}\)</span>, and a spike and slab sparsity inducing prior on <span class="math inline">\(x_{cl}\)</span>, rewriting <span class="math inline">\(x_{cl}=w_{cl}s_{cl}\)</span> where <span class="math inline">\(w_{cl}\)</span> is the diffuse Guassian ‘slab’ <span class="math inline">\(N(0,\beta_c^{-1})\)</span> and <span class="math inline">\(s_{cl}\)</span> is the Bernoulli ‘spike’ at 0 with probability <span class="math inline">\(p_{cl}\)</span>. We describe the model in full below.</p>
 <p>We apply a structured mean field variational Bayes approach, pairing <span class="math inline">\(w_{cl},s_{cl}\)</span>, but partitioning the remaining latent variables completely. In the analytical updates we obtain Gaussian posteriors on the <span class="math inline">\(a_{nc}, b_{tc},d_{mc}\)</span>, and we record in matrices the sets of means, precisions and second moments in the output.</p>
 <p>The analytic updates of <span class="math inline">\(W,S\)</span> yield a spike and slab posterior with probability <span class="math inline">\(\gamma_{cl}\)</span> for the Bernoulli variable <span class="math inline">\(s_{cl}\)</span>, and mean <span class="math inline">\(m\)</span>, precision <span class="math inline">\(\sigma\)</span> for the slab <span class="math inline">\(w_{cl}\)</span>. We also record the first and second moment of the product <span class="math inline">\(w_{cl}s_{cl}\)</span>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lapply</span>(res<span class="op">$</span>A,dim)
@@ -158,6 +158,28 @@ res<span class="op">$</span>maximumiteration
 
 <span class="kw">identical</span>(res<span class="op">$</span>WS<span class="op">$</span>mom1,res<span class="op">$</span>WS<span class="op">$</span>m<span class="op">*</span>res<span class="op">$</span>WS<span class="op">$</span>gamma)
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<p>We summarise the model as follows for a data tensor <span class="math inline">\(\Y = (y_{nlmt})_{n,l,m,t}\)</span>: ### The Likelihood <span class="math display">\[
+\begin{aligned}
+\mathbb{P}(Y\vert\Theta) &amp;= \prod_{n,l,m,t}N\left(y_{nlmt} \lvert \sum_{c=1}^C a_{nc}b_{tc}d_{mc}w_{cl}s_{cl},\lambda_{lt}^{-1}\right). 
+\end{aligned}
+\]</span></p>
+<div id="the-prior" class="section level3">
+<h3>The Prior</h3>
+<p><span class="math display">\[
+\begin{aligned}
+\mathbb{P}(\lambda_{lt}) &amp;= \mbox{Gamma}(\lambda_{lt}\vert u,v);\\
+\mathbb{P}(a_{nc}) &amp;= N(a_{nc}\vert 0,1);\\
+\mathbb{P}(b_{tc}) &amp;= N(b_{tc}\vert 0,1);\\
+\mathbb{P}(d_{mc}) &amp;= N(d_{mc}\vert 0,1);\\
+\mathbb{P}(w_{cl}\vert \beta_c) &amp;= N(w_{cl}\vert 0,\beta_c^{-1});\\
+\mathbb{P}(s_{cl}\vert \phi_{cl},\psi_{cl}) &amp;= \mbox{Beta}(s_{cl}\vert \psi_{cl}\phi_{cl});\\
+\mathbb{P}(\beta_c) &amp;= \mbox{Gamma}(\beta_c\vert e,f);\\
+\mathbb{P}(\phi_{cl}\vert\rho_c) &amp;= \mbox{Bernoulli}(\phi_{cl}\vert \rho_c);\\
+\mathbb{P}(\psi_{cl}) &amp;= \mbox{Beta}(\psi_{cl}\vert g,h);\\
+\mathbb{P}(\rho_c) &amp;= \mbox{Beta}(\rho_c\vert r,z). 
+\end{aligned}
+\]</span></p>
+</div>
 </div>
 
 

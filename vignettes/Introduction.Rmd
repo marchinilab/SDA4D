@@ -50,7 +50,8 @@ Now, setting `stopping=FALSE` to ignore the stopping criterion we run the tensor
 ```
 Note that we have suppressed the console output from this run in the file here.
 
-In the output we have the evidence lower bound (ELBO, also sometimes referred to as the negative free energy), recorded at each iteration, the maximum number of iterations, and a number of other parameters.
+In the output we have the evidence lower bound (ELBO, also sometimes referred to as the negative free energy), recorded at each iteration, the maximum number of iterations, and a number of other parameters.  Note that in the code we have omitted constant terms from the ELBO.
+
 ```{r plotELBO,fig.width=8,fig.height=6,echo=FALSE}
 #res<-list(Neg_FE=exp(rnorm(100)))
  # plot(-log(-res$Neg_FE[-1]),col='red',pch=4,xlab='Iteration',main='log(ELBO) over 100 iterations')
@@ -88,7 +89,7 @@ We accept a data tensor $Y \in \mathbb{R}^{N\times L \times M\times T}$ and mode
 $$y_{nlmt} = \sum_{c=1}^C a_{nc}b_{tc}d_{mc}x_{cl} +\epsilon_{nlmt},$$
 where $\epsilon_{nlmt} \sim N(0,\lambda_{lt}^{-1})$ is Gaussian noise, and $c$ indexes the $C$ components.  The model was designed with gene expression data in mind, with $N,L,M,T$ representing the number of samples, genes,time points, and tissues resprectively.  
 
-We place standard Gaussian priors on $a_{nc},b_{tc},d_{mc}$, and a spike and slab sparsity inducing prior on $x_{cl}$, rewriting $x_{cl}=w_{cl}s_{cl}$ where $w_{cl}$ is the diffuse Guassian 'slab' $N(0,\beta_c^{-1})$ and $s_{cl}$ is the Bernoulli 'spike' at 0 with probability $p_{cl}$.
+We place standard Gaussian priors on $a_{nc},b_{tc},d_{mc}$, and a spike and slab sparsity inducing prior on $x_{cl}$, rewriting $x_{cl}=w_{cl}s_{cl}$ where $w_{cl}$ is the diffuse Guassian 'slab' $N(0,\beta_c^{-1})$ and $s_{cl}$ is the Bernoulli 'spike' at 0 with probability $p_{cl}$.  We describe the model in full below.
 
 We apply a structured mean field variational Bayes approach,  pairing $w_{cl},s_{cl}$, but partitioning the remaining latent variables completely.  In the analytical updates we obtain Gaussian posteriors on the $a_{nc}, b_{tc},d_{mc}$, and we record in matrices the sets of means, precisions and second moments in the output.  
 
@@ -102,5 +103,32 @@ lapply(res$WS,dim)
 identical(res$WS$mom1,res$WS$m*res$WS$gamma)
 ```
 
+We summarise the model as follows for a data tensor $Y = (y_{nlmt})_{n,l,m,t}$:
 
+### The Likelihood
 
+$$
+\begin{aligned}
+\mathbb{P}(Y\vert\Theta) &= \prod_{n,l,m,t}N\left(y_{nlmt} \lvert \sum_{c=1}^C a_{nc}b_{tc}d_{mc}w_{cl}s_{cl},\lambda_{lt}^{-1}\right). 
+\end{aligned}
+$$
+
+### The Prior
+
+$$
+\begin{aligned}
+\mathbb{P}(\lambda_{lt}) &= \mbox{Gamma}(\lambda_{lt}\vert u,v);\\
+\mathbb{P}(a_{nc}) &= N(a_{nc}\vert 0,1);\\
+\mathbb{P}(b_{tc}) &= N(b_{tc}\vert 0,1);\\
+\mathbb{P}(d_{mc}) &= N(d_{mc}\vert 0,1);\\
+\mathbb{P}(w_{cl}\vert \beta_c) &= N(w_{cl}\vert 0,\beta_c^{-1});\\
+\mathbb{P}(s_{cl}\vert \phi_{cl},\psi_{cl}) &= \mbox{Beta}(s_{cl}\vert \psi_{cl}\phi_{cl});\\
+\mathbb{P}(\beta_c) &= \mbox{Gamma}(\beta_c\vert e,f);\\
+\mathbb{P}(\phi_{cl}\vert\rho_c) &= \mbox{Bernoulli}(\phi_{cl}\vert \rho_c);\\
+\mathbb{P}(\psi_{cl}) &= \mbox{Beta}(\psi_{cl}\vert g,h);\\
+\mathbb{P}(\rho_c) &= \mbox{Beta}(\rho_c\vert r,z). 
+\end{aligned}
+$$
+In deriving our Variational inference algorithm, we partition the variables as $$\{a_{nc}\},\{b_{tc}\},\{d_{mc}\},\{\phi_{cl}\},\{\psi_{cl}\},\{\rho_c\},\{\beta_c\},\{w_{cl},s_{cl}\}$$
+
+The variables $a_{nc},b_{tc},d_{mc},w_{cl},s_{cl},\beta_c,$ all have analytical updates and so their estimates are reported as lists of matrices (or vectors) of parameters and moments. The remaining variables $\phi_{cl},\psi_{cl},\rho_c$ are found by optimizing the corresponding terms of the ELBO, and have point estimates reported.

@@ -6,7 +6,7 @@ Description: SDA4D provides functionality within R for running a Bayesian sparse
     PARAFAC tensor decomposition in 4D using the same prior structure as 
     developed in SDA.
 Depends: R (>= 3.4.4)
-License: What license is it under?
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1

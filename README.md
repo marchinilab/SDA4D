@@ -52,7 +52,7 @@ Now, setting `stopping=FALSE` to ignore the stopping criterion we run the tensor
 ``` r
  res<-RunSDA4D(data_tensor = generatedData$dataTensor,
                dimn_vector = c(200,500,16,3),
-               max_iters = 50,
+               max_iters = 100,
                num_components = 8,
                stopping=FALSE)
 ```
@@ -67,9 +67,7 @@ In the output we have the evidence lower bound (ELBO, also sometimes referred to
 
 The output of the main function is a list of a number of components:
 
-The main RunSDA4D provides an interface to an implementation of a Bayesian sparse parallel factor analysis model for four-dimensional tensor decomposition.
-
-The output therefore consists of a list of the approximate posterior distributions of the main parameters, in the form of their parameters, or point estimates where these were calculated instead.
+The main RunSDA4D provides an interface to an implementation of a Bayesian sparse parallel factor analysis model for four-dimensional tensor decomposition. The output therefore consists of a list of the approximate posterior distributions of the main parameters, in the form of their parameters, or point estimates where these were calculated instead.
 
 ``` r
 names(res)
@@ -78,9 +76,9 @@ names(res)
 #>  [7] "Ph"               "Ps"               "Rho"             
 #> [10] "WS"               "maximumiteration"
 res$maximumiteration
-#> [1] 50
+#> [1] 100
 length(res$ELBO)
-#> [1] 51
+#> [1] 101
 ```
 
 See the vignette in the doc directory for a description of the output.

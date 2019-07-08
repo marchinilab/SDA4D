@@ -21,7 +21,7 @@ lapply(generatedData,dim)
 ## ----runmethod,results=FALSE---------------------------------------------
  res<-RunSDA4D(data_tensor = generatedData$dataTensor,
                dimn_vector = c(200,500,16,3),
-               max_iters = 50,
+               max_iters = 100,
                num_components = 8,
                stopping=FALSE)
 
@@ -33,13 +33,13 @@ lapply(generatedData,dim)
 ## ----plotELBOqplot,echo=FALSE,fig.width=6,fig.height=4-------------------
 library(ggplot2)
 startfrom=5
-qplot(x=c(startfrom:length(res$ELBO)),
-      y=res$ELBO[-c(1:(startfrom-1))],
-      geom=c("point", "line")
-      )+
-    ylab('ELBO')+
-    xlab('Iteration')+
-    ggtitle('ELBO over 50 iterations')
+ELBO_plot<-qplot(x=c(startfrom:length(res$ELBO)),
+                 y=res$ELBO[-c(1:(startfrom-1))],
+                 geom=c("point", "line"))+
+            ylab('ELBO')+
+            xlab('Iteration')+
+            ggtitle('ELBO over 100 iterations')
+suppressWarnings(print(ELBO_plot))
 
 ## ----outputnames---------------------------------------------------------
 names(res)

@@ -4,8 +4,7 @@
 \alias{generate_example_data}
 \title{generate an example four dimensional data tensor}
 \usage{
-generate_example_data(N = 200, L = 500, M = 16, paramT = 3,
-  sparsity = 0.4)
+generate_example_data(N = 200, L = 500, M = 16, paramT = 3, sparsity = 0.4)
 }
 \arguments{
 \item{N}{integer number of samples, default is 200.}

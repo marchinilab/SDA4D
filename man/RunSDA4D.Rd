@@ -4,8 +4,14 @@
 \alias{RunSDA4D}
 \title{Run SDA4D Bayesian Sparse Tensor Decomposition with default parameters.}
 \usage{
-RunSDA4D(data_tensor, dimn_vector, num_components = 4,
-  max_iters = 2000, stopping = TRUE, track = 10)
+RunSDA4D(
+  data_tensor,
+  dimn_vector,
+  num_components = 4,
+  max_iters = 2000,
+  stopping = TRUE,
+  track = 10
+)
 }
 \arguments{
 \item{data_tensor}{four dimensional tensor with dimensions $(N,L,M,T)$ where $N$ is the number of samples, $L$ is the number of genes.}

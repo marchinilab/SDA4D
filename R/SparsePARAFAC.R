@@ -1,5 +1,5 @@
 
-
+#' @export
 SparsePARAFAC<-function(params,datatensor,maxiter,stopping=TRUE,track=1,debugging=FALSE){
     #### readindata ####
     #datatensor<-readRDS(paste0(datapath,'/datatensor.RDS'))

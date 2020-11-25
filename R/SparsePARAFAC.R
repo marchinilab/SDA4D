@@ -1,6 +1,13 @@
 
-#' @export
-SparsePARAFAC<-function(params,datatensor,maxiter,stopping=TRUE,track=1,debugging=FALSE){
+## This is the main workhorse for the tensor decompositions, and the wrapper 
+## function RunSDA4D is provided for ease of use.  In particular providing 
+## hyperparameters for the priors specified.
+
+SparsePARAFAC<-function(params,datatensor,maxiter,stopping=TRUE,track=1,
+                        debugging=FALSE){
+    
+    # port of matlab code to R, in 2016.
+    
     #### readindata ####
     #datatensor<-readRDS(paste0(datapath,'/datatensor.RDS'))
     #system(paste0('mkdir -p ',outDIR))

@@ -6,21 +6,39 @@
 #' RunSDA4D performs a tensor decomposition of a 4D tensor with the default
 #' parameters as used in the accompanying paper.
 #'
-#' @param data_tensor four dimensional tensor with dimensions $(N,L,M,T)$ where $N$ is the number of samples, $L$ is the number of genes.
-#' @param dimn_vector numeric vector of length 4 which determines the dimension of the tensor.
-#' @param num_components integer number of components to run the decomposition with.
-#' @param maxiters integer maximum number of iterations to run.
-#' @param stopping binary TRUE/FALSE.  If TRUE then method will stop either
+#' @param data_tensor four dimensional numeric tensor with dimensions $(N,L,M,T)$
+#'  where $N$ is the number of samples, $L$ is the number of genes.
+#' @param dimn_vector numeric vector of length 4 which determines the dimension
+#'  of the tensor.
+#' @param num_components integer number of components to run the decomposition 
+#' with. Default is 4, minimum is 3.
+#' @param maxiters integer maximum number of iterations to run. Defaults to
+#'  2000.
+#' @param stopping binary TRUE/FALSE. Defaults to TRUE. If TRUE then method will stop either
 #' after \code{maxiters} or when the average number of PIPs passing the
 #' threshold of 0.5 over \code{track} iterations drops below 1.
 #' @param track integer number of iterations to keep track of if implementing
 #' the stopping criterion as described in \code{stopping} description.
+#'   Defaults to 10.
 #'
 #' @return a list of inferred parameters and ELBO trace.
 #'
+#'
+#' @examples 
+#' set.seed(531)
+#' ex_data <- generate_example_data()$dataTensor
+#' result <- RunSDA4D(ex_data, dim(ex_data))
+#' 
 #' @export
-RunSDA4D<-function(data_tensor,dimn_vector,num_components=4,max_iters=2000,stopping=TRUE,track=10){
+RunSDA4D<-function(data_tensor,
+                   dimn_vector,
+                   num_components=4,
+                   max_iters=2000,
+                   stopping=TRUE,
+                   track=10){
+    stopifnot(length(dim(data_tensor))==4)
     stopifnot(all(dimn_vector>0))
+    stopifnot(num_components>=3)
     if(any(is.na(data_tensor))){
       stop('ERROR: the data tensor contains missing data')
     }
@@ -32,12 +50,14 @@ RunSDA4D<-function(data_tensor,dimn_vector,num_components=4,max_iters=2000,stopp
     }
     stopifnot(length(dimn_vector)==length(dim(data_tensor)))
     if(!all(dim(data_tensor)==dimn_vector)){
-        stop('ERROR: dimension of tensor does not match provided dimensions, stopping')
+        stop('ERROR: dimension of tensor does not match provided dimensions,
+             stopping')
     }
     stopifnot(num_components>1)
     stopifnot(max_iters>1)
     if(stopping & track<1){
-        stop('ERROR: stopping is set to TRUE but track is < 1 , set track to at least 1.')
+        stop('ERROR: stopping is set to TRUE but track is < 1 , set track to at
+             least 1.')
     }
 
     ## next, setup the default hyperparameters and dimension vectors.
@@ -65,9 +85,11 @@ RunSDA4D<-function(data_tensor,dimn_vector,num_components=4,max_iters=2000,stopp
     }
 
     ## run the method and return variables
-    res<-SparsePARAFAC(params_to_run,data_tensor,maxiter=max_iters,stopping=stopping,track=track,debugging=FALSE)
+    res<-SparsePARAFAC(params_to_run,data_tensor,maxiter=max_iters,
+                       stopping=stopping,track=track,debugging=FALSE)
     if(res$Error==1){
-        print('Finished but Negative Free Energy shows signs of a decrease, this should be checked.')
+        print('Finished but Negative Free Energy shows signs of a decrease,
+              this should be checked.')
     }else{
         print('Finished')
     }

@@ -14,20 +14,25 @@ RunSDA4D(
 )
 }
 \arguments{
-\item{data_tensor}{four dimensional tensor with dimensions $(N,L,M,T)$ where $N$ is the number of samples, $L$ is the number of genes.}
+\item{data_tensor}{four dimensional numeric tensor with dimensions $(N,L,M,T)$
+where $N$ is the number of samples, $L$ is the number of genes.}
 
-\item{dimn_vector}{numeric vector of length 4 which determines the dimension of the tensor.}
+\item{dimn_vector}{numeric vector of length 4 which determines the dimension
+of the tensor.}
 
-\item{num_components}{integer number of components to run the decomposition with.}
+\item{num_components}{integer number of components to run the decomposition 
+with. Default is 4, minimum is 3.}
 
-\item{stopping}{binary TRUE/FALSE.  If TRUE then method will stop either
+\item{stopping}{binary TRUE/FALSE. Defaults to TRUE. If TRUE then method will stop either
 after \code{maxiters} or when the average number of PIPs passing the
 threshold of 0.5 over \code{track} iterations drops below 1.}
 
 \item{track}{integer number of iterations to keep track of if implementing
-the stopping criterion as described in \code{stopping} description.}
+the stopping criterion as described in \code{stopping} description.
+  Defaults to 10.}
 
-\item{maxiters}{integer maximum number of iterations to run.}
+\item{maxiters}{integer maximum number of iterations to run. Defaults to
+2000.}
 }
 \value{
 a list of inferred parameters and ELBO trace.
@@ -35,4 +40,10 @@ a list of inferred parameters and ELBO trace.
 \description{
 RunSDA4D performs a tensor decomposition of a 4D tensor with the default
 parameters as used in the accompanying paper.
+}
+\examples{
+set.seed(531)
+ex_data <- generate_example_data()$dataTensor
+result <- RunSDA4D(ex_data,dim(ex_data))
+
 }

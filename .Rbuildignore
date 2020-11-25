@@ -3,3 +3,4 @@
 ^Meta$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^LICENSE\.md$

@@ -21,8 +21,8 @@ Here we provide a basic introduction to the SDA4D package, an implementation of 
 First, ensure you've loaded the package.
 ```{r setup}
 # #Load the library SDA4D
-# #requires devtools
-#install.packages('devtools')
+# #you can use devtools, for example
+#if(!require(devtools)){install.packages('devtools')}
 #devtools::install_github('https://github.com/marchinilab/SDA4D')
 # #load library
 library(SDA4D)
@@ -38,7 +38,7 @@ lapply(generatedData,dim)
 ```
 
 ## Performing a short run of the tensor decomposition
-
+#### Running a 4D  tensor decomposition: 
 Now, setting `stopping=FALSE` to ignore the stopping criterion we run the tensor decomposition with the function `RunSDA4D` for 100 iterations as follows:
 
 ```{r runmethod,results=FALSE}
@@ -58,8 +58,8 @@ In the output we have the evidence lower bound (ELBO, also sometimes referred to
  # lines(-log(-res$Neg_FE[-1]),col='red')
 ```
 
-```{r plotELBOqplot,echo=FALSE,fig.width=6,fig.height=4}
-library(ggplot2)
+```{r plotELBOqplot,echo=FALSE,fig.width=6,fig.height=4,message = FALSE,warning = FALSE}
+suppressWarnings(library(ggplot2))
 startfrom=5
 ELBO_plot<-qplot(x=c(startfrom:length(res$ELBO)),
                  y=res$ELBO[-c(1:(startfrom-1))],
@@ -67,9 +67,17 @@ ELBO_plot<-qplot(x=c(startfrom:length(res$ELBO)),
             ylab('ELBO')+
             xlab('Iteration')+
             ggtitle('ELBO over 100 iterations')
-suppressWarnings(print(ELBO_plot))
+print(ELBO_plot)
 ```
 
+#### Running a 3D Tensor Decomposition
+The RunSDA4D function will only accept a 4D tensor. To run a 3D tensor decomposition,
+simply restructure the N by L by T tensor into an N by L by 1 by T tensor and
+use RunSDA4D as above.  Since the third dimension 
+is 1, RunSDA4D will automatically run a 3D tensor decomposition 
+by fixing the time scores matrix D to be a constant 1 by C matrix with value 1,
+and all iterations will neglect to update this matrix.  This is equivalent to a
+3D PARAFAC decomposition.
 
 ## The model and main function output
 

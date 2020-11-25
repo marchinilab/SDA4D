@@ -1,37 +1,37 @@
-## ---- include = FALSE----------------------------------------------------
+## ---- include = FALSE---------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 
-## ----setup---------------------------------------------------------------
+## ----setup--------------------------------------------------------------------
 # #Load the library SDA4D
-# #requires devtools
-#install.packages('devtools')
+# #you can use devtools, for example
+#if(!require(devtools)){install.packages('devtools')}
 #devtools::install_github('https://github.com/marchinilab/SDA4D')
 # #load library
 library(SDA4D)
 
-## ----generatedata--------------------------------------------------------
+## ----generatedata-------------------------------------------------------------
 set.seed(42)
 generatedData <- generate_example_data()
  
 lapply(generatedData,dim)
 
-## ----runmethod,results=FALSE---------------------------------------------
+## ----runmethod,results=FALSE--------------------------------------------------
  res<-RunSDA4D(data_tensor = generatedData$dataTensor,
                dimn_vector = c(200,500,16,3),
                max_iters = 100,
                num_components = 8,
                stopping=FALSE)
 
-## ----plotELBO,fig.width=8,fig.height=6,echo=FALSE------------------------
+## ----plotELBO,fig.width=8,fig.height=6,echo=FALSE-----------------------------
 #res<-list(Neg_FE=exp(rnorm(100)))
  # plot(-log(-res$Neg_FE[-1]),col='red',pch=4,xlab='Iteration',main='log(ELBO) over 100 iterations')
  # lines(-log(-res$Neg_FE[-1]),col='red')
 
-## ----plotELBOqplot,echo=FALSE,fig.width=6,fig.height=4-------------------
-library(ggplot2)
+## ----plotELBOqplot,echo=FALSE,fig.width=6,fig.height=4,message = FALSE,warning = FALSE----
+suppressWarnings(library(ggplot2))
 startfrom=5
 ELBO_plot<-qplot(x=c(startfrom:length(res$ELBO)),
                  y=res$ELBO[-c(1:(startfrom-1))],
@@ -39,14 +39,14 @@ ELBO_plot<-qplot(x=c(startfrom:length(res$ELBO)),
             ylab('ELBO')+
             xlab('Iteration')+
             ggtitle('ELBO over 100 iterations')
-suppressWarnings(print(ELBO_plot))
+print(ELBO_plot)
 
-## ----outputnames---------------------------------------------------------
+## ----outputnames--------------------------------------------------------------
 names(res)
 res$maximumiteration
 length(res$ELBO)
 
-## ----outputnamesanddims--------------------------------------------------
+## ----outputnamesanddims-------------------------------------------------------
 lapply(res$A,dim)
 
 lapply(res$WS,dim)

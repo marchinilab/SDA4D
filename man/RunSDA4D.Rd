@@ -44,6 +44,6 @@ parameters as used in the accompanying paper.
 \examples{
 set.seed(531)
 ex_data <- generate_example_data()$dataTensor
-result <- RunSDA4D(ex_data,dim(ex_data))
+result <- RunSDA4D(ex_data, dim(ex_data))
 
 }

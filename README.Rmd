@@ -18,7 +18,7 @@ library(SDA4D)
 An R package providing an implementation of a variational Bayes algorithm for 
 four dimensional Parallel Factor Analysis.  
 
-This is the software accompanying the bioRxiv preprint  [Four-Dimensional Sparse Bayesian Tensor Decomposition for Gene Expression Data]https://doi.org/10.1101/2020.11.30.403907).
+This is the software accompanying the bioRxiv preprint  [Four-Dimensional Sparse Bayesian Tensor Decomposition for Gene Expression Data](https://doi.org/10.1101/2020.11.30.403907).
 
 ## Installation
 

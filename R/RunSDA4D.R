@@ -12,7 +12,7 @@
 #'  of the tensor.
 #' @param num_components integer number of components to run the decomposition 
 #' with. Default is 4, minimum is 3.
-#' @param maxiters integer maximum number of iterations to run. Defaults to
+#' @param max_iters integer maximum number of iterations to run. Defaults to
 #'  2000.
 #' @param stopping binary TRUE/FALSE. Defaults to TRUE. If TRUE then method will stop either
 #' after \code{maxiters} or when the average number of PIPs passing the
@@ -53,6 +53,16 @@ RunSDA4D<-function(data_tensor,
         stop('ERROR: dimension of tensor does not match provided dimensions,
              stopping')
     }
+    
+    if(dimn_vector[3]>1 & dimn_vector[4]==1){
+      stop("ERROR: The 3D model applies to tensors of dimensions N,L,1,T, 
+           check the dimensions of your tensor")
+    }
+    if(dimn_vector[1]<=1 || dimn_vector[2]<=1){
+      stop("ERROR: The first two dimensions N,L of the data tensor must be
+           larger than 1.")
+    }
+    
     stopifnot(num_components>1)
     stopifnot(max_iters>1)
     if(stopping & track<1){
@@ -77,8 +87,10 @@ RunSDA4D<-function(data_tensor,
                        z=1)
 
     #check and report dimensions
-    if(params_to_run$M==1){
-        print('Dimension M is set to 1, so running as 3D tensor decomposition')
+    if(params_to_run$M==1 && params_to_run$T > 1){
+        print('Dimensions M = 1, T>1 so running as 3D tensor decomposition')
+    }else if(params_to_run$M==1 && params_to_run$T == 1){
+      print('Dimensions M = 1, T = 1 so running as 2D factor analysis decomposition')
     }else{
         print('Running as 4D tensor decomposition')
         print(paste('with dimensions ',dimn_vector))

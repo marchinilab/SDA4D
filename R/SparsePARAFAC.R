@@ -3,7 +3,11 @@
 ## function RunSDA4D is provided for ease of use.  In particular providing 
 ## hyperparameters for the priors specified.
 
-SparsePARAFAC<-function(params,datatensor,maxiter,stopping=TRUE,track=1,
+SparsePARAFAC<-function(params,
+                        datatensor,
+                        maxiter,
+                        stopping=TRUE,
+                        track=1,
                         debugging=FALSE){
     
     # port of matlab code to R, in 2016.
@@ -19,10 +23,15 @@ SparsePARAFAC<-function(params,datatensor,maxiter,stopping=TRUE,track=1,
         list_of_vars$A <- list(mu = matrix(rnorm(params$N * params$C),params$N,params$C),
                                precision = matrix(100,params$N,params$C))
         list_of_vars$A$mom2 <- list_of_vars$A$mu^2 + 0.01
-
-        list_of_vars$B <- list(nu = matrix(rnorm(params$T * params$C),params$T,params$C),
-                               precision = matrix(100,params$T,params$C))
-        list_of_vars$B$mom2 <- list_of_vars$B$nu^2 + 0.01
+        if(params$T>1){
+            list_of_vars$B <- list(nu = matrix(rnorm(params$T * params$C),params$T,params$C),
+                                   precision = matrix(100,params$T,params$C))
+            list_of_vars$B$mom2 <- list_of_vars$B$nu^2 + 0.01
+        }else{
+            list_of_vars$B <- list(nu = matrix(c(1),params$T,params$C),
+                                   precision = matrix(1,params$T,params$C))
+            list_of_vars$B$mom2 <- list_of_vars$B$nu^2
+        }
         if(params$M>1){
             list_of_vars$D <- list(alpha = matrix(rnorm(params$M * params$C),params$M,params$C),
                                    precision = matrix(100,params$M,params$C))
@@ -545,17 +554,19 @@ SparsePARAFAC<-function(params,datatensor,maxiter,stopping=TRUE,track=1,
                 break
             }
         }
-        vars$B=updateB(params)
-        print('B')
-        if(debugging){
-            FEold=FEcur
-            FEcur=Free_Energy(params)
-            #write(format(FEcur,nsmall=10),NegFEfile,append=TRUE)
-            vars$Neg_FE[(iteration-1)*stepsize + 7]=FEcur
-            if(FEcur<FEold){
-                vars$Error=c(1)
-                #write('Error',NegFEfile,append=TRUE)
-                break
+        if(params$T>1){
+            vars$B=updateB(params)
+            print('B')
+            if(debugging){
+                FEold=FEcur
+                FEcur=Free_Energy(params)
+                #write(format(FEcur,nsmall=10),NegFEfile,append=TRUE)
+                vars$Neg_FE[(iteration-1)*stepsize + 7]=FEcur
+                if(FEcur<FEold){
+                    vars$Error=c(1)
+                    #write('Error',NegFEfile,append=TRUE)
+                    break
+                }
             }
         }
         if(params$M>1){

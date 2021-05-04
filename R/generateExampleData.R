@@ -5,11 +5,11 @@
 #' @param M integer number of time points, default is 16.
 #' @param paramT integer number of tissues, default is 3.
 #' @param sparsity, default is 0.4.
-#' @param numcomponents integer number of components, default is 8.
 
 #' @return list consisting of N by L by M by paramT dataTensor and the
 #' four matrices A B D X that generate it.
 #'
+#' @importFrom stats rbinom rnorm rbeta
 #' @export
 generate_example_data=function(N=200,
                                L=500,

@@ -23,6 +23,9 @@ of the tensor.}
 \item{num_components}{integer number of components to run the decomposition 
 with. Default is 4, minimum is 3.}
 
+\item{max_iters}{integer maximum number of iterations to run. Defaults to
+2000.}
+
 \item{stopping}{binary TRUE/FALSE. Defaults to TRUE. If TRUE then method will stop either
 after \code{maxiters} or when the average number of PIPs passing the
 threshold of 0.5 over \code{track} iterations drops below 1.}
@@ -30,9 +33,6 @@ threshold of 0.5 over \code{track} iterations drops below 1.}
 \item{track}{integer number of iterations to keep track of if implementing
 the stopping criterion as described in \code{stopping} description.
   Defaults to 10.}
-
-\item{maxiters}{integer maximum number of iterations to run. Defaults to
-2000.}
 }
 \value{
 a list of inferred parameters and ELBO trace.

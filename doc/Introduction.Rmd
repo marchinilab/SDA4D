@@ -59,9 +59,9 @@ In the output we have the evidence lower bound (ELBO, also sometimes referred to
 ```
 
 ```{r plotELBOqplot,echo=FALSE,fig.width=6,fig.height=4,message = FALSE,warning = FALSE}
-suppressWarnings(library(ggplot2))
+library(ggplot2)
 startfrom=5
-ELBO_plot<-qplot(x=c(startfrom:length(res$ELBO)),
+ELBO_plot <- qplot(x=c(startfrom:length(res$ELBO)),
                  y=res$ELBO[-c(1:(startfrom-1))],
                  geom=c("point", "line"))+
             ylab('ELBO')+
@@ -78,6 +78,19 @@ is 1, RunSDA4D will automatically run a 3D tensor decomposition
 by fixing the time scores matrix D to be a constant 1 by C matrix with value 1,
 and all iterations will neglect to update this matrix.  This is equivalent to a
 3D PARAFAC decomposition.
+
+#### Running a 2D Matrix Factorisation
+
+To run a 2D matrix factorisation,
+restructure the N by L matrix into an N by L by 1 by 1 tensor with the 
+provided `matrixToTensor` function and
+use RunSDA4D as above. This amounts to using arguments 
+`data_tensor = matrixToTensor(data_matrix), dimn_vector = c(dim(data_matrix),1,1)`. 
+Since the third and fourth dimensions 
+are 1, RunSDA4D will automatically run a 2D matrix factorisation 
+by fixing the time and tissue scores matrices D,B to be constant 1 by C matrices with value 1.
+All iterations will neglect to update these matrices.  This is equivalent to a
+Factor Analysis decomposition.
 
 ## The model and main function output
 

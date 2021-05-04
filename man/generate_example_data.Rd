@@ -16,8 +16,6 @@ generate_example_data(N = 200, L = 500, M = 16, paramT = 3, sparsity = 0.4)
 \item{paramT}{integer number of tissues, default is 3.}
 
 \item{sparsity, }{default is 0.4.}
-
-\item{numcomponents}{integer number of components, default is 8.}
 }
 \value{
 list consisting of N by L by M by paramT dataTensor and the

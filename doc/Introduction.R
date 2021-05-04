@@ -31,9 +31,9 @@ lapply(generatedData,dim)
  # lines(-log(-res$Neg_FE[-1]),col='red')
 
 ## ----plotELBOqplot,echo=FALSE,fig.width=6,fig.height=4,message = FALSE,warning = FALSE----
-suppressWarnings(library(ggplot2))
+library(ggplot2)
 startfrom=5
-ELBO_plot<-qplot(x=c(startfrom:length(res$ELBO)),
+ELBO_plot <- qplot(x=c(startfrom:length(res$ELBO)),
                  y=res$ELBO[-c(1:(startfrom-1))],
                  geom=c("point", "line"))+
             ylab('ELBO')+

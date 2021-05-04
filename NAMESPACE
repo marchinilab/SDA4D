@@ -2,3 +2,7 @@
 
 export(RunSDA4D)
 export(generate_example_data)
+export(matrixToTensor)
+importFrom(stats,rbeta)
+importFrom(stats,rbinom)
+importFrom(stats,rnorm)

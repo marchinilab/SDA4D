@@ -88,31 +88,31 @@ RunSDA4D<-function(data_tensor,
 
     #check and report dimensions
     if(params_to_run$M==1 && params_to_run$T > 1){
-        print('Dimensions M = 1, T>1 so running as 3D tensor decomposition')
+        cat('Dimensions M = 1, T>1 so running as 3D tensor decomposition \n')
     }else if(params_to_run$M==1 && params_to_run$T == 1){
-      print('Dimensions M = 1, T = 1 so running as 2D factor analysis decomposition')
+      cat('Dimensions M = 1, T = 1 so running as 2D factor analysis decomposition \n')
     }else{
-        print('Running as 4D tensor decomposition')
-        print(paste('with dimensions ',dimn_vector))
+        cat('Running as 4D tensor decomposition')
+        cat(' with dimensions ',dimn_vector,'\n')
     }
 
     ## run the method and return variables
     res<-SparsePARAFAC(params_to_run,data_tensor,maxiter=max_iters,
                        stopping=stopping,track=track,debugging=FALSE)
     if(res$Error==1){
-        print('Finished but Negative Free Energy shows signs of a decrease,
-              this should be checked.')
+        cat('Finished but Negative Free Energy shows signs of a decrease,
+              this should be checked.\n')
     }else{
-        print('Finished')
+        cat('Finished.\n')
     }
     res[[1]]<-NULL #removes the error indicator from the output.
     if(stopping){
-        print(paste(res$maximumiteration,' Iterations were carried out.'))
+        cat(res$maximumiteration,' Iterations were carried out.\n')
     }
     names(res)[1] = "ELBO" # renames Neg_FE to ELBO for the vignette.
     if(res$ELBO[1]!=0){
         res$ELBO = res$ELBO[res$ELBO!=0]
     }
-    print('returning output')
+    cat('returning output\n')
     return(res)
 }

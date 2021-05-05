@@ -485,10 +485,10 @@ SparsePARAFAC<-function(params,
 
 
     while(iteration<=maxiter & continue){
-        print(paste0('Iteration ',iteration))
+        cat('Iteration',iteration,'\n')
         vars$Beta=updateBeta(params)
-        print('Beta')
         if(debugging){
+            print('Beta')
             FEold=FEcur
             FEcur=Free_Energy(params)
             vars$Neg_FE[(iteration-1)*stepsize + 2]=FEcur
@@ -500,8 +500,8 @@ SparsePARAFAC<-function(params,
             }
         }
         vars$WS=updateWS(params)
-        print('WS')
         if(debugging){
+            print('WS')
             FEold=FEcur
             FEcur=Free_Energy(params)
             #write(format(FEcur,nsmall=10),NegFEfile,append=TRUE)
@@ -513,8 +513,8 @@ SparsePARAFAC<-function(params,
             }
         }
         vars$Rho=updateRho(params)
-        print('Rho')
         if(debugging){
+            print('Rho')
             FEold=FEcur
             FEcur=Free_Energy(params)
             #write(format(FEcur,nsmall=10),NegFEfile,append=TRUE)
@@ -529,8 +529,9 @@ SparsePARAFAC<-function(params,
         tmp = updatePhiPsi(params)
         vars$Ph = tmp$Phi
         vars$Ps = tmp$Psi
-        print('PhiPsi')
+        
         if(debugging){
+            print('PhiPsi')
             FEold=FEcur
             FEcur=Free_Energy(params)
             #write(format(FEcur,nsmall=10),NegFEfile,append=TRUE)
@@ -542,8 +543,8 @@ SparsePARAFAC<-function(params,
             }
         }
         vars$A=updateA(params)
-        print('A')
         if(debugging){
+            print('A')
             FEold=FEcur
             FEcur=Free_Energy(params)
             #write(format(FEcur,nsmall=10),NegFEfile,append=TRUE)
@@ -556,8 +557,8 @@ SparsePARAFAC<-function(params,
         }
         if(params$T>1){
             vars$B=updateB(params)
-            print('B')
             if(debugging){
+                print('B')
                 FEold=FEcur
                 FEcur=Free_Energy(params)
                 #write(format(FEcur,nsmall=10),NegFEfile,append=TRUE)
@@ -571,8 +572,8 @@ SparsePARAFAC<-function(params,
         }
         if(params$M>1){
             vars$D=updateD(params)
-            print('D')
             if(debugging){
+                print('D')
                 FEold=FEcur
                 FEcur=Free_Energy(params)
                 #write(format(FEcur,nsmall=10),NegFEfile,append=TRUE)
@@ -585,7 +586,9 @@ SparsePARAFAC<-function(params,
             }
         }
         vars$Lam=updateLam(params)
-        print('Lam')
+        if(debugging){
+            print('Lam')
+            }
         FEold=FEcur
         FEcur=Free_Energy(params)
         #write(format(FEcur,nsmall=10),NegFEfile,append=TRUE)
